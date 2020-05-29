@@ -7,8 +7,10 @@
 (defn create-payment-intent
   "Creates a payment intent.
   Execute with common/execute."
-  []
-  {:operation :create-payment-intent})
+  [amount currency & extra-info]
+  (apply util/merge-maps {:operation :create-payment-intent
+                          :amount amount
+                          :currency (name currency)} extra-info))
 
 (defmethod execute :create-payment-intent [op-data]
   (util/post-request *stripe-token* (str api-root "/payment_intents") (dissoc op-data :operation)))
