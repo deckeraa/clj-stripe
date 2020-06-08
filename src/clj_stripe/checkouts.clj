@@ -7,20 +7,22 @@
 (defn create-checkout-session
   "Creates a payment intent.
   Execute with common/execute."
-  [prices mode success-url cancel-url]
+  [prices mode success-url cancel-url metadata]
   {:operation :create-checkout-session
    :prices prices
    :success-url success-url
    :cancel-url  cancel-url
    :mode mode
+   :metadata metadata
    })
 
-(defn- make-request-map [{:keys [success-url cancel-url prices mode]}]
+(defn- make-request-map [{:keys [success-url cancel-url prices mode metadata]}]
   (apply merge
          {"success_url" success-url
           "cancel_url"  cancel-url
           "payment_method_types[]" "card"
           "mode" mode
+          "metadata" metadata
           }
          (map-indexed
           (fn [idx {:keys [price-id quantity]}]
