@@ -56,3 +56,28 @@
 (defmethod execute :unsubscribe-customer 
   [op-data]
   (util/delete-request *stripe-token* (util/url-with-optional-params (str api-root "/customers/" (get op-data "customer") "/subscription") op-data ["at_period_end"])))
+
+(defn get-subscription
+  [subscription-id]
+  {:operation :get-subscription :subscription-id subscription-id})
+
+(defmethod execute :get-subscription
+  [op-data]
+  (util/post-request
+   *stripe-token*
+   (str api-root "/subscriptions/" (get op-data :subscription-id))
+   {}))
+
+(defn set-subscription-items
+  [subscription-id items]
+  (util/merge-maps
+         {:operation :set-subscription-items :subscription-id subscription-id}
+         items))
+
+(defmethod execute :set-subscription-items
+  [op-data]
+  (util/post-request
+   *stripe-token*
+   (str api-root "/subscriptions/" (get op-data :subscription-id))
+   (dissoc op-data :operation :subscription-id)
+   ))
